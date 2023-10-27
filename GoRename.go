@@ -59,7 +59,7 @@ func main() {
 	}
 
 	for _, v := range files {
-		var originalpath string = path + "\\" + v.Name()
+		var originalpath string = filepath.Join(path, v.Name())
 		ext := filepath.Ext(originalpath)
 		if FileType != "" && FileType != ext {
 			return //skip file if extension mismatch
@@ -90,7 +90,7 @@ func main() {
 				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
 			} else {
 				now := time.Now()
-				e := os.Rename(originalpath, path+"\\"+now.Format("2006-01-02")+v.Name())
+				e := os.Rename(originalpath, filepath.Join(path, now.Format("2006-01-02")+v.Name()))
 				if e != nil {
 					fmt.Println(e)
 				}
@@ -111,7 +111,7 @@ func main() {
 				if !(dr) && v.IsDir() {
 					fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
 				} else {
-					e := os.Rename(originalpath, path+"\\"+strings.Replace(v.Name(), StrToReplace, StrReplacer, -1))
+					e := os.Rename(originalpath, filepath.Join(path, strings.Replace(v.Name(), StrToReplace, StrReplacer, -1)))
 					if e != nil {
 						fmt.Println(e)
 					}
@@ -127,7 +127,7 @@ func main() {
 				} else {
 					var re = regexp.MustCompile(RegExPattern)
 					s := re.ReplaceAllString(v.Name(), RegExReplace)
-					e := os.Rename(originalpath, path+"\\"+s)
+					e := os.Rename(originalpath, filepath.Join(path, s))
 					if e != nil {
 						fmt.Println(e)
 					}

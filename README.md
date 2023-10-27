@@ -42,30 +42,6 @@ Usage of ./GoRename:
   -h  
     help for ./GoRename  
     
-## Examples:  
-  
-Prefix all files in the current directory with "new_"  
-./GoRename -path . -prefix new_  
-  
-Append ".bak" to the end of all files in the current directory  
-./GoRename -path . -append .bak  
-  
-Replace all instances of "old" with "new" in the filenames of all files in the current directory  
-./GoRename -path . -StrToReplace old -StrReplacer new  
-  
-Use regular expression to remove all numbers from the filenames of all files in the current directory  
-./GoRename -path . -RegExRemove '[0-9]+'  
-  
-Remove all files in the current directory that have the extension ".txt"  
-./GoRename -path . -RegExRemove '.txt$'  
-  
-Add the current date and time to the beginning of the filenames of all files in the current directory  
-./GoRename -path . -tp  
-  
-Add the current date and time to the end of the filenames of all files in the current directory  
-./GoRename -path . -ta  
-  
-
 
 ## Notes
 

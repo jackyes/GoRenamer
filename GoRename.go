@@ -41,6 +41,12 @@ func main() {
 	flag.BoolVar(&ta, "ta", false, "Append YYYY-MM-DD to filename.")
 
 	flag.Parse()
+	
+	if FileType != "" && !strings.HasPrefix(FileType, ".") {
+		fmt.Println("Insert File ext with a starting .")
+		return
+	}
+	
 
 	if path == "" {
 		fmt.Println("Insert path. Use -h for help")
@@ -67,7 +73,7 @@ func main() {
 		if prefix != "" {
 			fmt.Printf("prefix")
 			if !(dr) && v.IsDir() {
-				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				e := os.Rename(originalpath, path+prefix+v.Name())
 				if e != nil {

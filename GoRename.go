@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	if (RegExReplace != "" && RegExPattern == "") || (RegExReplace != "" && RegExPattern == "") {
+	if (RegExReplace != "" && RegExPattern == "") || (RegExPattern != "" && RegExReplace == "") {
 		fmt.Println("If you use -RegExReplace and/or -RegExPattern, they both must be provided.")
 		return
 	}

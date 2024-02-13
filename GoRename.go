@@ -41,12 +41,16 @@ func main() {
 	flag.BoolVar(&ta, "ta", false, "Append YYYY-MM-DD to filename.")
 
 	flag.Parse()
-	
+
 	if FileType != "" && !strings.HasPrefix(FileType, ".") {
 		fmt.Println("Insert File ext with a starting .")
 		return
 	}
-	
+
+	if (StrToReplace != "" && StrReplacer == "") || (StrReplacer != "" && StrToReplace == "") {
+		fmt.Println("If you use -StrToReplace and/or -StrReplacer, they both must be provided.")
+		return
+	}
 
 	if path == "" {
 		fmt.Println("Insert path. Use -h for help")

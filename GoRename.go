@@ -52,6 +52,11 @@ func main() {
 		return
 	}
 
+	if (RegExReplace != "" && RegExPattern == "") || (RegExReplace != "" && RegExPattern == "") {
+		fmt.Println("If you use -RegExReplace and/or -RegExPattern, they both must be provided.")
+		return
+	}
+
 	if path == "" {
 		fmt.Println("Insert path. Use -h for help")
 		return

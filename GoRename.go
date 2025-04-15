@@ -77,14 +77,14 @@ func main() {
 		var originalpath string = filepath.Join(path, v.Name())
 		ext := filepath.Ext(originalpath)
 		if FileType != "" && FileType != ext {
-			return //skip file if extension mismatch
+			continue //skip file if extension mismatch
 		}
 		if prefix != "" {
 			fmt.Printf("prefix")
 			if !(dr) && v.IsDir() {
 				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
-				e := os.Rename(originalpath, path+prefix+v.Name())
+				e := os.Rename(originalpath, filepath.Join(path, prefix+v.Name()))
 				if e != nil {
 					fmt.Println(e)
 				}
@@ -92,7 +92,7 @@ func main() {
 		} else if append != "" {
 			fmt.Printf("append")
 			if !(dr) && v.IsDir() {
-				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				ext := filepath.Ext(originalpath)
 				e := os.Rename(originalpath, originalpath[0:len(originalpath)-len(ext)]+append+ext)
@@ -102,7 +102,7 @@ func main() {
 			}
 		} else if tp {
 			if !(dr) && v.IsDir() {
-				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				now := time.Now()
 				e := os.Rename(originalpath, filepath.Join(path, now.Format("2006-01-02")+v.Name()))
@@ -112,7 +112,7 @@ func main() {
 			}
 		} else if ta {
 			if !(dr) && v.IsDir() {
-				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				now := time.Now()
 				ext := filepath.Ext(originalpath)
@@ -124,7 +124,7 @@ func main() {
 		} else if StrToReplace != "" || StrReplacer != "" {
 			if !(StrToReplace == "") && !(StrReplacer == "") {
 				if !(dr) && v.IsDir() {
-					fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+					fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 				} else {
 					e := os.Rename(originalpath, filepath.Join(path, strings.Replace(v.Name(), StrToReplace, StrReplacer, -1)))
 					if e != nil {
@@ -132,13 +132,13 @@ func main() {
 					}
 				}
 			} else {
-				fmt.Println("-StrToReplace and -StrReplacer must be used togheter. User -h for help.")
+				fmt.Println("-StrToReplace and -StrReplacer must be used together. Use -h for help.")
 			}
 
 		} else if RegExPattern != "" || RegExReplace != "" {
 			if !(RegExPattern == "") || !(RegExReplace == "") {
 				if !(dr) && v.IsDir() {
-					fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+					fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 				} else {
 					var re = regexp.MustCompile(RegExPattern)
 					s := re.ReplaceAllString(v.Name(), RegExReplace)
@@ -148,18 +148,24 @@ func main() {
 					}
 				}
 			} else {
-				fmt.Println("-RegExPattern and -RegExReplace must be used togheter. User -h for help.")
+				fmt.Println("-RegExPattern and -RegExReplace must be used together. Use -h for help.")
 			}
 		} else if RegExRemove != "" {
 			if !(dr) && v.IsDir() {
-				fmt.Println(v.Name() + " is a directory. Use -dr to aplly change also to directory.")
+				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				sampleRegexp := regexp.MustCompile(RegExRemove)
 				match := sampleRegexp.Match([]byte(v.Name()))
 				if match {
 					e := os.Remove(originalpath)
 					if e != nil {
-						fmt.Println(e)
+						if os.IsPermission(e) {
+							fmt.Printf("Permission denied removing file: %s\n", originalpath)
+						} else if strings.Contains(e.Error(), "used by another process") {
+							fmt.Printf("File locked/used by another process: %s\n", originalpath)
+						} else {
+							fmt.Println(e)
+						}
 					}
 				}
 			}

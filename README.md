@@ -9,7 +9,7 @@ Rename or delete files in bulk using prefixes, suffixes, string replacement, or 
 ## Install
 
 ```
-git clone https://github.com/jackyes89/GoRenamer.git
+git clone https://github.com/jackyes/GoRenamer.git
 cd GoRenamer
 go build -o GoRenamer.exe GoRename.go
 ```

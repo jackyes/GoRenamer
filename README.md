@@ -1,52 +1,91 @@
 # GoRenamer
 
-This program provides a convenient way to rename files in a directory using the provided flags. It supports adding prefixes, appending strings, renaming with a current date, and even using regex patterns for more advanced renaming capabilities.
+Rename or delete files in bulk using prefixes, suffixes, string replacement, or regex patterns.
 
-## Features
+## Requirements
 
-- **Prefix & Append**: Easily add a prefix or append a string to file names.
-- **Date Formatting**: Add current date (YYYY-MM-DD) as a prefix or append it to file names.
-- **String Replacement**: Replace a specific string in the filename.
-- **RegEx Support**: Use regular expressions for advanced renaming.
-- **File Type Filter**: Rename only files with a specific extension.
-- **Remove by RegEx**: Delete files whose names match a specific regex pattern.
-- **Directory Rename**: Apply the renaming also to directories.
+- [Go](https://go.dev/dl/) 1.18+
 
-## Usage:  
-  
-Usage of ./GoRename:  
-  -append string  
-    Add <string> at the end of filename  
-  -dr  
-    Add -dr to modify also Directory name  
-  -FileType string  
-    Rename only file with extension (Example: .dwg)  
-  -path string  
-    Select path.  
-  -prefix string  
-    Add <string> before filename  
-  -RegExPattern string  
-    RegEx Pattern. (Use with -RegExReplace <string>.  
-  -RegExReplace string  
-    String to replace the matched regex. (Use with -RegExPattern <string>.)  
-  -RegExRemove string  
-    Remove file if match regex.  
-  -StrReplacer string  
-    String to be replaced on renamed filename. (Use with -StrToReplace <string>.)  
-  -StrToReplace string  
-    String to be replaced on original filename. (Use with -StrReplacer <string>.)  
-  -ta  
-    Append YYYY-MM-DD to filename.  
-  -tp  
-    Add YYYY-MM-DD as prefix.  
-  -h  
-    help for ./GoRename  
-    
+## Install
+
+```
+git clone https://github.com/jackyes89/GoRenamer.git
+cd GoRenamer
+go build -o GoRenamer.exe GoRename.go
+```
+
+## Usage
+
+```
+GoRename -path <directory> [flags]
+```
+
+The `-path` flag is always required. All other flags are optional, but only one operation runs per invocation (the first matching flag wins, checked in the order below).
+
+## Flags
+
+| Flag | Description |
+|---|---|
+| `-path` | Target directory |
+| `-prefix` | Add string before each filename |
+| `-append` | Insert string before the file extension |
+| `-tp` | Prefix with current date (`YYYY-MM-DD`) |
+| `-ta` | Append current date before the extension |
+| `-StrToReplace` | Substring to find (use with `-StrReplacer`) |
+| `-StrReplacer` | Replacement string (use with `-StrToReplace`) |
+| `-RegExPattern` | Regex pattern to match (use with `-RegExReplace`) |
+| `-RegExReplace` | Replacement for regex matches (use with `-RegExPattern`) |
+| `-RegExRemove` | Regex pattern — matching files are deleted |
+| `-FileType` | Filter by extension (e.g. `.txt`, `.dwg`) |
+| `-dr` | Apply operation to directories as well |
+| `-h` | Show help |
+
+## Examples
+
+Add a prefix to every file:
+
+```
+GoRename -path ./docs -prefix "draft_"
+```
+
+Append a version tag before the extension:
+
+```
+GoRename -path ./images -append "_v2"
+```
+
+Rename all `.pdf` files with today's date as prefix:
+
+```
+GoRename -path ./invoices -tp -FileType .pdf
+```
+
+Replace a substring:
+
+```
+GoRename -path ./logs -StrToReplace "error" -StrReplacer "ERROR"
+```
+
+Rename using regex capture groups:
+
+```
+GoRename -path ./photos -RegExPattern "IMG_(\d+)" -RegExReplace "Photo_$1"
+```
+
+Delete all `.tmp` files:
+
+```
+GoRename -path ./temp -RegExRemove "\.tmp$"
+```
+
+Rename directories too:
+
+```
+GoRename -path ./project -prefix "2024_" -dr
+```
 
 ## Notes
 
-- Always back up your data before making bulk renaming operations.
-- Ensure you have the necessary permissions for renaming and deleting in the specified directory.
-- The -dr flag must be used to modify the names of directories.
-- The -FileType flag can be used to filter the files that are renamed.
-- The -h flag can be used to display this help message.
+- Back up your data before running bulk operations.
+- You need write permission on the target directory.
+- Invalid regex passed to `-RegExPattern` or `-RegExRemove` prints an error and exits instead of crashing.

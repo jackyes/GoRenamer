@@ -94,8 +94,9 @@ func main() {
 			if !(dr) && v.IsDir() {
 				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
-				ext := filepath.Ext(originalpath)
-				e := os.Rename(originalpath, originalpath[0:len(originalpath)-len(ext)]+append+ext)
+				ext := filepath.Ext(v.Name())
+				base := v.Name()[:len(v.Name())-len(ext)]
+				e := os.Rename(originalpath, filepath.Join(path, base+append+ext))
 				if e != nil {
 					fmt.Println(e)
 				}
@@ -115,8 +116,9 @@ func main() {
 				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
 				now := time.Now()
-				ext := filepath.Ext(originalpath)
-				e := os.Rename(originalpath, originalpath[0:len(originalpath)-len(ext)]+now.Format("2006-01-02")+ext)
+				ext := filepath.Ext(v.Name())
+				base := v.Name()[:len(v.Name())-len(ext)]
+				e := os.Rename(originalpath, filepath.Join(path, base+now.Format("2006-01-02")+ext))
 				if e != nil {
 					fmt.Println(e)
 				}
@@ -140,7 +142,11 @@ func main() {
 				if !(dr) && v.IsDir() {
 					fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 				} else {
-					var re = regexp.MustCompile(RegExPattern)
+					re, err := regexp.Compile(RegExPattern)
+					if err != nil {
+						fmt.Println("Invalid regex pattern:", err)
+						return
+					}
 					s := re.ReplaceAllString(v.Name(), RegExReplace)
 					e := os.Rename(originalpath, filepath.Join(path, s))
 					if e != nil {
@@ -154,7 +160,11 @@ func main() {
 			if !(dr) && v.IsDir() {
 				fmt.Println(v.Name() + " is a directory. Use -dr to apply change also to directory.")
 			} else {
-				sampleRegexp := regexp.MustCompile(RegExRemove)
+				sampleRegexp, err := regexp.Compile(RegExRemove)
+				if err != nil {
+					fmt.Println("Invalid regex pattern:", err)
+					return
+				}
 				match := sampleRegexp.Match([]byte(v.Name()))
 				if match {
 					e := os.Remove(originalpath)
